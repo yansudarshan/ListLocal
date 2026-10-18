@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: listlocal-app
+    ports:
+      - "3000:3000"
+    environment:
+      # Connect to Ollama running directly on host machine
+      - OLLAMA_URL=http://host.docker.internal:11434
+      - VISION_MODEL=gemma3:4b
+      - ARENA_MODEL_B=llama3.2-vision
+      - EMBED_MODEL=nomic-embed-text
+      - MOCK_LLM=0
+      - PORT=3000
+      - DATA_DIR=/app/data
+    extra_hosts:
+      # Enables container to reach Ollama on host machine via host.docker.internal
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data:/app/data
+      - ./public/uploads:/app/public/uploads
+    restart: unless-stopped
